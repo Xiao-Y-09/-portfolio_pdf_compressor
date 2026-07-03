@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip --version)",
+      "Bash(py -3.11 --version)",
+      "Bash(py --list)",
+      "Bash(npm --version)",
+      "Bash(python -m venv .venv)",
+      "Bash(.venv/Scripts/python -m pip install --quiet --upgrade pip)",
+      "Bash(.venv/Scripts/pip install *)",
+      "Bash(.venv/Scripts/python -c \"import fitz, cv2, PIL, fastapi, pydantic; print\\('fitz', fitz.__version__\\); print\\('cv2', cv2.__version__\\); print\\('pydantic', pydantic.__version__\\)\")",
+      "Bash(.venv/Scripts/python -c \"from compressor import pipeline, cli, strategy_v1, strategy_v2, classifier, pdf_io; print\\('imports ok'\\)\")",
+      "Bash(.venv/Scripts/python -m pytest tests/ -x -q)",
+      "Bash(.venv/Scripts/python -m pytest tests/ -q)",
+      "Bash(.venv/Scripts/python -)",
+      "Bash(.venv/Scripts/python -m compressor /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/big.pdf --target 20 --output /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/out20.pdf)",
+      "Bash(.venv/Scripts/python -m compressor /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/big.pdf --target 5 --output /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/out5.pdf)",
+      "Bash(npx --yes create-next-app@latest web --ts --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --use-npm --yes --skip-install=false)",
+      "Bash(tail -5 /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/tasks/bsvuisukh.output 2>/dev/null; ls /c/Code/pdf_compressor/web 2>/dev/null)",
+      "Read(//c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/tasks/**)",
+      "Bash(npm run *)",
+      "Bash(.venv/Scripts/python -m uvicorn server.main:app --port 8000 --log-level warning)",
+      "Bash(cat \"/c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/tasks/bsaall13b.output\")",
+      "Bash(/c/Code/pdf_compressor/.venv/Scripts/python -m uvicorn server.main:app --port 8000 --log-level warning)",
+      "Bash(curl -s -w '\\\\nHTTP %{http_code}\\\\n' -X POST http://127.0.0.1:8000/api/jobs -F 'file=@/c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/big.pdf;type=application/pdf' -F target_mb=10)",
+      "Bash(.venv/Scripts/python -m ruff check src server tests)",
+      "Bash(.venv/Scripts/python -m black --check -q src server tests)",
+      "Bash(echo \"ruff/black exit: $?\")",
+      "Bash(.venv/Scripts/black --check -q src server tests)",
+      "Bash(echo \"black exit: $?\")",
+      "Bash(.venv/Scripts/black src *)"
+    ]
+  }
+}
