@@ -162,3 +162,16 @@ def render_page(page: fitz.Page, dpi: int) -> np.ndarray:
     pix = page.get_pixmap(dpi=dpi, colorspace=fitz.csRGB, alpha=False)
     arr = np.frombuffer(pix.samples, dtype=np.uint8)
     return arr.reshape(pix.height, pix.width, 3).copy()
+
+
+def generate_thumbnails(doc: fitz.Document) -> list[bytes]:
+    """Render every page to a small JPEG for the review UI."""
+    thumbs: list[bytes] = []
+    for page in doc:
+        arr = render_page(page, dpi=config.THUMBNAIL_DPI)
+        buf = io.BytesIO()
+        Image.fromarray(arr).save(
+            buf, format="JPEG", quality=config.THUMBNAIL_JPEG_QUALITY, optimize=True
+        )
+        thumbs.append(buf.getvalue())
+    return thumbs

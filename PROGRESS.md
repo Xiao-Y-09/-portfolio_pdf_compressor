@@ -1,5 +1,58 @@
 # PROGRESS
 
+## v4.0 (PROJECT_BRIEF_v4.md) — 2026-07-03
+
+### Phase A: 后端核心
+
+- [x] T4.1 `schemas.py`/`config.py`：strategy_switch_ratio 0.4→0.05、hero_max_ppi 150（替代 max_ppi 200）、
+  hero_min_ppi 120、process_max_ppi 96（新增）、process_min_ppi 72、hero_max_quality 95、process_min_quality 20、
+  jpeg2000_quality_threshold 40、enable_font_subsetting、enable_grayscale_detection、grayscale_channel_diff_threshold 5；
+  config.py 新增 THUMBNAIL_DPI/THUMBNAIL_JPEG_QUALITY 和 J2K rate 映射锚点（J2K_RATE_AT_THRESHOLD=30、SLOPE=2，
+  锚定在 JPEG q40≈30:1 使切换边界大小连续）
+- [x] T4.7 `pipeline._subset_fonts()`：v2 路径在 scan 之前调用 `doc.subset_fonts()`，try/except 保护（坑 7），
+  放在 scan 前避免 xref 变动影响缓存
+- [x] T4.3 `strategy_v2.is_grayscale_image()`：256px 采样 + RGB 通道 99 分位差 ≤ 阈值 → convert("L") + /DeviceGray
+- [x] T4.4 `strategy_v2.encode_image()`：quality < 40 → Pillow JPEG2000（quality_mode="rates"，irreversible）+ /JPXDecode；
+  否则 JPEG + /DCTDecode。write_image 按编码结果同步 Filter/ColorSpace（EncodedImage 模型承载）
+- [x] 已验证 fitz 能渲染 /JPXDecode 写回的图片
+
+### Phase B: 两阶段流程（后端）
+
+- [x] T4.2 `pdf_io.generate_thumbnails()`：每页 40 DPI JPEG q70
+- [x] T4.5 `compress_v2(..., selected_pages)`：selected 页图片强制 HERO，其余强制 PROCESS；None 时用 AI 分类
+- [x] T4.6 `pipeline` 拆分：`run_analysis()`（缩略图 base64 + 页面分类 + ai_suggested_pages 1-indexed）、
+  `run_compression()`（接收 1-indexed selected_pages，内部转 0-indexed）。原 compress_pdf 已删除，无兼容别名
+- [x] T4.8 API 拆分：POST /api/jobs（上传+同步分析，201 返回 AnalysisResult）、POST /api/jobs/{id}/confirm
+  （校验 target 档位和页码范围，202）、GET /api/jobs/{id}、GET /api/jobs/{id}/download；
+  jobs.py 状态机 waiting_confirm → processing → done/error
+- [x] CLI 加 `--selected-pages 1,3,7`
+
+### Phase C+D: 前端
+
+- [x] T4.9 `page.tsx` 多阶段：upload → analyzing → review → compressing → done
+- [x] T4.10 `components/ThumbnailGrid.tsx`：缩略图 grid + checkbox + AI 建议标签 + 全选/清空/反选，
+  hero 页默认勾选；`UploadZone.tsx`、`ProgressBar.tsx` 拆出
+- [x] T4.11 API 调用链：上传 → 展示 review → confirm → 轮询 → 下载，错误处理与恢复
+- [x] T4.12 视觉升级：indigo 品牌色 + logo mark、卡片阴影、hover 效果、渐变背景、响应式 grid
+  （2/3/4 列）、暗色模式。`npm run build` 通过
+
+### v4 验证记录
+
+- pytest 48 passed（新增：灰度检测、J2K 切换、rate 映射、selected_pages 预算迁移、run_analysis 结构、
+  字体子集化缩小验证、两阶段 API 全流程）
+- CLI：35MB 合成作品集 →10MB 走 vector_preserving 6.08MB（v3 同目标走的是栅格化）；
+  →5MB + --selected-pages 1,2,3 也保持 vector_preserving，文字仍为矢量（get_text 验证）
+- API E2E（curl）：upload 201（12 页缩略图+分类）→ confirm 202 → done（3.07MB ≤ 10MB）→ download 合法 PDF
+
+### v4 遗留
+
+- 等待真实 101MB `Xiang_Yi_Portfolio.pdf` 做 5/10/15/20 四档人工画质检查（brief Section 10 关键测试）
+- 前端已按新 API 重写，部署到 Vercel 后需把 Railway 后端 URL 配到 NEXT_PUBLIC_API_URL
+
+---
+
+# v3.0 PROGRESS（历史）
+
 ## Phase 0: 核心库
 
 - [x] Task 0.1 项目初始化：pyproject.toml、目录结构、.gitignore、venv（Python 3.14，系统仅此版本，满足 >=3.11）

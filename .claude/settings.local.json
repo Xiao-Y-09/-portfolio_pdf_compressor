@@ -28,7 +28,13 @@
       "Bash(echo \"ruff/black exit: $?\")",
       "Bash(.venv/Scripts/black --check -q src server tests)",
       "Bash(echo \"black exit: $?\")",
-      "Bash(.venv/Scripts/black src *)"
+      "Bash(.venv/Scripts/black src *)",
+      "Bash(.venv/Scripts/python -m compressor /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/big.pdf --target 10 --output /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/v4_out10.pdf)",
+      "Bash(.venv/Scripts/python -m compressor /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/big.pdf --target 5 --output /c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/scratchpad/v4_out5.pdf --selected-pages 1,2,3)",
+      "Bash(tail -20 \"/c/Users/PC/AppData/Local/Temp/claude/c--Code-pdf-compressor/405472ef-714b-495e-a561-7b1de103d2e8/tasks/bccgfvp9e.output\")",
+      "PowerShell($conns = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if \\($conns\\) { $conns | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -Confirm:$false }; \"killed: $\\($conns.OwningProcess | Sort-Object -Unique\\)\" } else { \"port free\" })",
+      "Bash(rm -f /c/Code/pdf_compressor/.pytest_tmp/big.pdf /c/Code/pdf_compressor/.pytest_tmp/out_v4.pdf /c/Code/pdf_compressor/.pytest_tmp/analysis.json)",
+      "Bash(.venv/Scripts/black -q src server tests)"
     ]
   }
 }

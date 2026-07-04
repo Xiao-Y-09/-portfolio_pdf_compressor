@@ -75,6 +75,16 @@ def test_pdf_bytes_uses_garbage_collection(portfolio_pdf: Path) -> None:
     doc.close()
 
 
+def test_generate_thumbnails(portfolio_pdf: Path) -> None:
+    from compressor.pdf_io import generate_thumbnails
+
+    doc = open_pdf(portfolio_pdf)
+    thumbs = generate_thumbnails(doc)
+    assert len(thumbs) == doc.page_count
+    assert all(t.startswith(b"\xff\xd8") for t in thumbs)
+    doc.close()
+
+
 def test_scan_skips_non_stream_xrefs() -> None:
     doc = fitz.open()
     doc.new_page().insert_text((72, 72), "no images here")

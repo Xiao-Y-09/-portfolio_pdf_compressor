@@ -58,18 +58,25 @@ class CompressionConfig(BaseModel):
     target_size_mb: float
     tolerance_mb: float = 0.3
 
-    # strategy switch
-    strategy_switch_ratio: float = 0.4  # compression_ratio <= 0.4 -> v1 path
+    # strategy switch (v4: rasterization is a last resort only)
+    strategy_switch_ratio: float = 0.05  # compression_ratio <= 0.05 -> v1 path
 
     # v2 path (per-image PPI + quality)
-    max_ppi: int = 200
-    hero_min_ppi: int = 150
-    process_min_ppi: int = 96
-    hero_max_quality: int = 92
+    hero_max_ppi: int = 150
+    hero_min_ppi: int = 120
+    process_max_ppi: int = 96
+    process_min_ppi: int = 72
+    hero_max_quality: int = 95
     process_max_quality: int = 75
     hero_min_quality: int = 45
-    process_min_quality: int = 25
+    process_min_quality: int = 20
     small_image_quality_floor: int = 20
+
+    # v4: format selection and grayscale detection
+    jpeg2000_quality_threshold: int = 40  # quality below this -> JPEG 2000
+    enable_font_subsetting: bool = True
+    enable_grayscale_detection: bool = True
+    grayscale_channel_diff_threshold: int = 5  # max RGB channel spread to call it gray
 
     # v1 path (whole-page rasterization)
     render_dpi: int = 200
@@ -115,3 +122,25 @@ class CompressionResult(BaseModel):
         False  # output is below the window because quality hit its ceiling
     )
     duration_seconds: float = 0.0
+
+
+class AnalysisResult(BaseModel):
+    """Output of the analysis phase, shown to the user for page review.
+
+    Page numbers in ai_suggested_pages are 1-indexed, matching what the
+    user sees in the review UI.
+    """
+
+    job_id: str = ""
+    page_count: int
+    original_size_mb: float
+    thumbnails: list[str]  # base64-encoded JPEG, one per page
+    page_classifications: list[PageType]
+    ai_suggested_pages: list[int]
+
+
+class CompressionRequest(BaseModel):
+    """User confirmation payload: target size plus reviewed page selection."""
+
+    target_size_mb: float
+    selected_pages: list[int]  # 1-indexed pages the user marked as important

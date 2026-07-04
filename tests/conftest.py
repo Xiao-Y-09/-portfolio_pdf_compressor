@@ -40,6 +40,16 @@ def rgba_png(width: int, height: int, seed: int = RNG_SEED) -> bytes:
     return buf.getvalue()
 
 
+def gray_jpeg(width: int, height: int, seed: int = RNG_SEED) -> bytes:
+    """A noisy grayscale photo saved as RGB JPEG (all channels identical)."""
+    rng = np.random.default_rng(seed)
+    base = rng.integers(0, 256, size=(height // 8, width // 8), dtype=np.uint8)
+    gray = Image.fromarray(base).resize((width, height), Image.BILINEAR)
+    buf = io.BytesIO()
+    gray.convert("RGB").save(buf, format="JPEG", quality=95)
+    return buf.getvalue()
+
+
 def tiny_png(side: int = 20) -> bytes:
     buf = io.BytesIO()
     Image.new("RGB", (side, side), (200, 30, 30)).save(buf, format="PNG")
@@ -85,6 +95,22 @@ def portfolio_pdf(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """A ~4-6 MB synthetic portfolio used by most tests."""
     path = tmp_path_factory.mktemp("fixtures") / "portfolio.pdf"
     return build_portfolio(path)
+
+
+@pytest.fixture(scope="session")
+def embedded_font_pdf(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """A PDF with a fully embedded TTF font (for subsetting tests)."""
+    font = Path("C:/Windows/Fonts/arial.ttf")
+    if not font.is_file():
+        pytest.skip("arial.ttf not available")
+    path = tmp_path_factory.mktemp("fixtures") / "embedded_font.pdf"
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_font(fontname="F0", fontfile=str(font))
+    page.insert_text((72, 72), "Subset me please", fontname="F0", fontsize=14)
+    doc.save(str(path), deflate=True)
+    doc.close()
+    return path
 
 
 @pytest.fixture(scope="session")

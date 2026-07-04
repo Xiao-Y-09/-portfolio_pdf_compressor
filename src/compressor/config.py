@@ -33,6 +33,17 @@ PAGE_CLASSIFY_DPI = 48
 LARGE_DISPLAY_RATIO = 0.5  # image covers >= 50% of page area
 MEDIUM_DISPLAY_RATIO = 0.15
 
+# --- v4: thumbnails for the review UI ---
+THUMBNAIL_DPI = 40
+THUMBNAIL_JPEG_QUALITY = 70
+
+# --- v4: JPEG quality -> JPEG 2000 compression rate mapping (pitfall 8) ---
+# JPEG 2000 takes a compression rate (original/compressed), not a quality.
+# Anchored so the boundary is roughly continuous: JPEG q40 compresses photos
+# at ~30:1, and each quality step below the threshold adds RATE_SLOPE.
+J2K_RATE_AT_THRESHOLD = 30.0
+J2K_RATE_SLOPE = 2.0
+
 # --- v1 rasterization ---
 MIN_RENDER_DPI = 72  # never rasterize below this
 QUALITY_MULTIPLIER_MIN = 0.15  # lower bound for the global quality multiplier search
